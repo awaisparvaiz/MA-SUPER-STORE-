@@ -1,181 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AS MART | Online Karyana & General Store</title>
-<style>
-:root{--green:#167a45;--dark:#123c2a;--mint:#eaf7ef;--gold:#f5b942;--ink:#17231c;--muted:#68756d}
-*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f6faf7;color:var(--ink)}
-header{background:linear-gradient(120deg,var(--dark),var(--green));color:white;padding:18px 5%;position:sticky;top:0;z-index:5;box-shadow:0 3px 14px #0002}
-.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.brand{font-size:25px;font-weight:900;letter-spacing:1px}.brand span{color:#b8f0c9}
-nav{display:flex;gap:16px;flex-wrap:wrap}nav a{color:white;text-decoration:none;font-weight:700;font-size:14px}
-.cartbtn{background:var(--gold);color:#19251d;border:0;border-radius:25px;padding:11px 17px;font-weight:800;cursor:pointer}
-.hero{margin:22px auto 16px;max-width:1180px;padding:38px 5%;border-radius:22px;background:linear-gradient(100deg,#103e2bdf,#167a45bd),url('https://images.unsplash.com/photo-1542838132-92c53300491e?w=1400') center/cover;color:white}
-.hero h1{font-size:clamp(28px,5vw,48px);margin:0 0 10px}.hero p{font-size:17px;max-width:560px;line-height:1.5}.hero button{background:var(--gold);border:0;padding:13px 20px;border-radius:10px;font-weight:800;cursor:pointer}
-.wrap{max-width:1180px;margin:auto;padding:0 18px 35px}.tools{display:flex;gap:10px;margin:20px 0;flex-wrap:wrap}.tools input,.tools select{padding:12px;border:1px solid #d5e2d9;border-radius:10px;background:white;font-size:15px;flex:1;min-width:180px}
-h2{color:var(--dark);margin:25px 0 14px}.cats{display:flex;gap:9px;overflow-x:auto;padding:3px 0 12px}.cat{border:1px solid #cfe4d5;background:white;color:var(--dark);padding:10px 15px;border-radius:22px;white-space:nowrap;cursor:pointer;font-weight:700}.cat.active{background:var(--green);color:white}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:15px}.product{background:white;border:1px solid #e3eee6;border-radius:15px;overflow:hidden;box-shadow:0 4px 14px #153e2410;display:flex;flex-direction:column}.pic{height:125px;background:var(--mint);display:grid;place-items:center;font-size:54px}.info{padding:12px;display:flex;flex-direction:column;gap:8px;flex:1}.info h3{font-size:15px;margin:0;min-height:35px}.price{font-weight:900;color:var(--green)}.unit{font-size:12px;color:var(--muted)}.add{margin-top:auto;background:var(--green);color:white;border:0;border-radius:9px;padding:10px;font-weight:800;cursor:pointer}
-.layout{display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start}.cart{background:white;border:1px solid #dce9df;border-radius:15px;padding:16px;position:sticky;top:90px}.cart h2{margin-top:0}.cartrow{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #edf2ee;padding:10px 0;font-size:14px}.qty{display:flex;align-items:center;gap:7px}.qty button{border:0;background:var(--mint);border-radius:6px;padding:4px 8px;cursor:pointer}.total{font-size:20px;font-weight:900;display:flex;justify-content:space-between;margin:15px 0}.checkout{width:100%;padding:13px;background:var(--gold);border:0;border-radius:10px;font-weight:900;cursor:pointer}.small{font-size:12px;color:var(--muted);line-height:1.5}
-form input,form textarea,form select{width:100%;padding:11px;border:1px solid #d5e2d9;border-radius:9px;margin:6px 0 10px;font:inherit}footer{background:#103e2b;color:white;text-align:center;padding:22px;margin-top:30px}
-@media(max-width:800px){.layout{grid-template-columns:1fr}.cart{position:static;order:-1}.hero{margin:14px}.top{align-items:flex-start}nav{order:3;width:100%}}
-</style>
-</head>
-<body>
-<header><div class="top">
- <div class="brand">AS <span>MART</span></div>
- <nav><a href="#shop">Shop</a><a href="#categories">Categories</a><a href="#cart">My Cart</a></nav>
- <button class="cartbtn" onclick="document.querySelector('#cart').scrollIntoView({behavior:'smooth'})">🛒 Cart <b id="cartCount">0</b></button>
-</div></header>
-<section class="hero"><h1>Fresh Grocery, Everyday Value</h1><p>Your neighborhood karyana & general store — everyday essentials, snacks, household items and more.</p><button onclick="document.querySelector('#shop').scrollIntoView({behavior:'smooth'})">SHOP NOW</button></section>
-<main class="wrap">
- <h2 id="categories">Shop by Category</h2><div class="cats" id="cats"></div>
- <div class="tools"><input id="search" placeholder="Search products..." oninput="render()"><select id="sort" onchange="render()"><option value="">Sort products</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select></div>
- <div class="layout"><section id="shop"><div class="grid" id="products"></div></section>
- <aside class="cart" id="cart"><h2>🛒 Your Basket</h2><div id="cartItems"><p class="small">Your basket is empty. Add products to begin.</p></div><div class="total"><span>Total</span><span id="total">Rs. 0</span></div>
- <h3>Delivery Details</h3><form id="orderForm" onsubmit="placeOrder(event)">
- <input id="customer" placeholder="Your name" required>
- <input id="phone" placeholder="Mobile number" inputmode="tel" required>
- <textarea id="address" placeholder="Delivery address" rows="2" required></textarea>
- <select id="payment"><option>Cash on Delivery</option><option>JazzCash (confirm with store)</option><option>Easypaisa (confirm with store)</option></select>
- <button class="checkout" type="submit">Place Order on WhatsApp</button></form>
- <p class="small">Demo store: update product prices, delivery details and WhatsApp number in the code before publishing. Online payment is not activated by this demo.</p>
- </aside></div>
-</main><footer>© 2026 AS MART · Karyana & General Store</footer>
-<script>
-const WHATSAPP_NUMBER = "92XXXXXXXXXX"; // Replace with your store WhatsApp number (92 + number, no + sign)
-const products = [
- ["Wheat Flour (Atta)","Staples",180,"kg","🌾"],["Rice","Staples",320,"kg","🍚"],["Sugar","Staples",170,"kg",""],["Maida","Staples",160,"kg",""],["Besan","Staples",240,"kg",""],["Suji","Staples",190,"kg",""],
- ["Chana Daal","Pulses",280,"kg",""],["Moong Daal","Pulses",330,"kg",""],["Masoor Daal","Pulses",300,"kg",""],["Mash Daal","Pulses",390,"kg",""],["White Chickpeas","Pulses",290,"kg",""],["Black Chickpeas","Pulses",270,"kg",""],
- ["Cooking Oil","Cooking",590,"litre","🫗"],["Banaspati Ghee","Cooking",560,"kg",""],["Salt","Cooking",60,"pack",""],["Red Chilli Powder","Spices",120,"pack","🌶️"],["Turmeric Powder","Spices",100,"pack",""],["Coriander Powder","Spices",110,"pack",""],
- ["Vital Tea","Tea & Drinks",180,"pack","🍵"],["Milk Pack","Dairy",220,"pack","🥛"],["Tea Whitener","Dairy",250,"pack",""],["Lactogen","Baby Care",950,"pack",""],
- ["Rio Biscuits","Snacks",50,"pack","🍪"],["TUC Biscuits","Snacks",80,"pack",""],["Cream Biscuits","Snacks",60,"pack",""],["Chips","Snacks",50,"pack","🍟"],["Nimko","Snacks",100,"pack",""],["Chocolate","Snacks",100,"piece","🍫"],["Toffees","Snacks",20,"pack",""],
- ["Lux Soap","Personal Care",160,"piece","🧼"],["Lifebuoy Soap","Personal Care",150,"piece",""],["Shampoo","Personal Care",120,"sachet",""],["Toothpaste","Personal Care",180,"piece",""],["Hair Oil","Personal Care",220,"bottle",""],["Face Cream","Personal Care",250,"piece",""],
- ["Washing Powder","Cleaning",180,"pack","🧺"],["Dishwashing Soap","Cleaning",100,"piece",""],["Tissue Paper","Household",120,"pack",""],["Batteries","Household",100,"pair","🔋"],["Lighter","Household",100,"piece",""]
-].map((p,i)=>({id:i,name:p[0],cat:p[1],price:p[2],unit:p[3],emoji:p[4]||"🛍️"}));
-let cart={};let category="All";
-const categories=["All",...new Set(products.map(p=>p.cat))];
-document.getElementById("cats").innerHTML=categories.map(c=>`<button class="cat ${c==="All"?"active":""}" onclick="setCat('${c}',this)">${c}</button>`).join("");
-function setCat(c,el){category=c;document.querySelectorAll(".cat").forEach(x=>x.classList.remove("active"));el.classList.add("active");render()}
-function render(){
- let q=document.getElementById("search").value.toLowerCase(),s=document.getElementById("sort").value;
- let list=products.filter(p=>(category==="All"||p.cat===category)&&p.name.toLowerCase().includes(q));
- if(s==="low")list.sort((a,b)=>a.price-b.price);if(s==="high")list.sort((a,b)=>b.price-a.price);
- document.getElementById("products").innerHTML=list.map(p=>`<article class="product"><div class="pic">${p.emoji}</div><div class="info"><h3>${p.name}</h3><div class="price">Rs. ${p.price}</div><div class="unit">per ${p.unit} · Demo price</div><button class="add" onclick="add(${p.id})">＋ Add to Basket</button></div></article>`).join("")||"<p>No products found.</p>";
- updateCart();
-}
-function add(id){cart[id]=(cart[id]||0)+1;updateCart()}
-function change(id,n){cart[id]=(cart[id]||0)+n;if(cart[id]<=0)delete cart[id];updateCart()}
-function updateCart(){
- let entries=Object.entries(cart),count=entries.reduce((a,[,q])=>a+q,0),sum=0;
- document.getElementById("cartCount").textContent=count;
- document.getElementById("cartItems").innerHTML=entries.length?entries.map(([id,q])=>{let p=products[+id];sum+=p.price*q;return `<div class="cartrow"><div><b>${p.name}</b><br><span class="small">Rs. ${p.price} × ${q}</span></div><div class="qty"><button onclick="change(${id},-1)">−</button>${q}<button onclick="change(${id},1)">＋</button></div></div>`}).join(""):'<p class="small">Your basket is empty. Add products to begin.</p>';
- document.getElementById("total").textContent="Rs. "+sum.toLocaleString("en-PK");
-}
-function placeOrder(e){
- e.preventDefault();let entries=Object.entries(cart);if(!entries.length){alert("Please add products to your basket.");return}
- let total=entries.reduce((a,[id,q])=>a+products[+id].price*q,0);
- let lines=entries.map(([id,q])=>`${products[+id].name} x ${q} = Rs. ${products[+id].price*q}`);
- let msg=`AS MART ORDER%0AName: ${encodeURIComponent(document.getElementById("customer").value)}%0APhone: ${encodeURIComponent(document.getElementById("phone").value)}%0AAddress: ${encodeURIComponent(document.getElementById("address").value)}%0APayment: ${encodeURIComponent(document.getElementById("payment").value)}%0A%0A${encodeURIComponent(lines.join("\n"))}%0A%0ATotal: Rs. ${total}`;
- if(WHATSAPP_NUMBER==="92XXXXXXXXXX"){alert("Please replace WHATSAPP_NUMBER in the code with your store WhatsApp number first.");return}
- window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`,"_blank");
-}
-render();
-</script>
-from pathlib import Path
-import base64, mimetypes
-
-# Embed the user's six shop photos so the page can show the real shop even offline.
-photo_paths = [
-    "/mnt/data/1000109834.jpg", "/mnt/data/1000109833.jpg",
-    "/mnt/data/1000109832.jpg", "/mnt/data/1000109829.jpg",
-    "/mnt/data/1000109830.jpg", "/mnt/data/1000109826.jpg"
-]
-photo_data = []
-for p in photo_paths:
-    raw = Path(p).read_bytes()
-    photo_data.append("data:image/jpeg;base64," + base64.b64encode(raw).decode("ascii"))
-
-items = [
-("Aata","Staples",180,"kg","🌾"),("Chawal","Staples",320,"kg","🍚"),("Cheeni","Staples",170,"kg","🧂"),
-("Maida","Staples",160,"kg","🌾"),("Besan","Staples",240,"kg","🟡"),("Suji","Staples",190,"kg","🌾"),
-("Chana Daal","Daal & Pulses",280,"kg","🫘"),("Moong Daal","Daal & Pulses",330,"kg","🫘"),
-("Masoor Daal","Daal & Pulses",300,"kg","🫘"),("Mash Daal","Daal & Pulses",390,"kg","🫘"),
-("Safaid Chana","Daal & Pulses",290,"kg","🫘"),("Kala Chana","Daal & Pulses",270,"kg","🫘"),
-("Cooking Oil","Cooking",590,"litre","🫗"),("Banaspati Ghee","Cooking",560,"kg","🧈"),
-("Namak","Masalay",60,"pack","🧂"),("Lal Mirch Powder","Masalay",120,"pack","🌶️"),
-("Haldi Powder","Masalay",100,"pack","🟡"),("Dhania Powder","Masalay",110,"pack","🌿"),
-("Vital Tea","Tea & Drinks",180,"pack","🍵"),("Cold Drink","Tea & Drinks",120,"bottle","🥤"),
-("Milk Pack","Dairy",220,"pack","🥛"),("Tea Whitener","Dairy",250,"pack","🥛"),
-("Lactogen","Baby Care",950,"pack","🍼"),("Rio Biscuits","Biscuits & Snacks",50,"pack","🍪"),
-("TUC Biscuits","Biscuits & Snacks",80,"pack","🍘"),("Cream Biscuits","Biscuits & Snacks",60,"pack","🍪"),
-("Chips","Biscuits & Snacks",50,"pack","🍟"),("Nimko","Biscuits & Snacks",100,"pack","🥜"),
-("Chocolate","Biscuits & Snacks",100,"piece","🍫"),("Toffees","Biscuits & Snacks",20,"pack","🍬"),
-("Lux Soap","Personal Care",160,"piece","🧼"),("Lifebuoy Soap","Personal Care",150,"piece","🧼"),
-("Shampoo","Personal Care",120,"sachet","🧴"),("Toothpaste","Personal Care",180,"piece","🪥"),
-("Hair Oil","Personal Care",220,"bottle","🧴"),("Face Cream","Personal Care",250,"piece","🧴"),
-("Washing Powder","Cleaning",180,"pack","🫧"),("Dishwashing Soap","Cleaning",100,"piece","🧽"),
-("Tissue Paper","Household",120,"pack","🧻"),("Batteries","Household",100,"pair","🔋")
-]
-import json
-photos_js = json.dumps(photo_data)
-items_js = json.dumps(items, ensure_ascii=False)
-
-html = f'''<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AS MART | Grocery & General Store</title>
 <style>
-:root{{--g:#147a45;--dg:#103d2b;--mint:#eff8f1;--gold:#f4bd4f;--ink:#18251d}}
-*{{box-sizing:border-box}}body{{margin:0;background:#f7faf7;color:var(--ink);font-family:Arial,sans-serif}}
-header{{background:linear-gradient(110deg,var(--dg),var(--g));color:#fff;padding:16px 5%;position:sticky;top:0;z-index:5}}
-.top{{max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}}
-.logo{{font-size:26px;font-weight:900;letter-spacing:1px}}.logo span{{color:#c4f1d1}}
-nav a{{color:white;text-decoration:none;margin:0 8px;font-weight:bold;font-size:14px}}
-button{{cursor:pointer}}.cartjump{{background:var(--gold);border:0;border-radius:22px;padding:11px 16px;font-weight:800}}
-.hero{{max-width:1200px;margin:22px auto;padding:35px 5%;border-radius:20px;color:white;background:linear-gradient(100deg,#0b392bdc,#147a45a8),url('{photo_data[3]}') center/cover}}
-.hero h1{{font-size:clamp(28px,5vw,46px);margin:0 0 10px}}.hero p{{max-width:570px;line-height:1.5}}
-.wrap{{max-width:1200px;margin:auto;padding:0 16px 35px}}.gallery{{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}}
-.gallery img{{width:100%;height:145px;object-fit:cover;border-radius:12px}}h2{{color:var(--dg)}}
-.filters{{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}}input,select,textarea{{padding:12px;border:1px solid #d7e4da;border-radius:9px;font:inherit;background:white}}#search{{flex:1;min-width:190px}}
-.cats{{display:flex;gap:8px;overflow:auto;padding:5px 0 14px}}.cat{{border:1px solid #cfe2d3;background:white;padding:10px 14px;border-radius:20px;white-space:nowrap;font-weight:bold;color:var(--dg)}}.cat.active{{background:var(--g);color:white}}
-.layout{{display:grid;grid-template-columns:1fr 330px;gap:18px;align-items:start}}.grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px}}
-.card{{background:white;border:1px solid #e0ebe3;border-radius:14px;overflow:hidden;box-shadow:0 4px 12px #123d2010;display:flex;flex-direction:column}}
-.productpic{{height:125px;background:linear-gradient(145deg,#f0faf2,#dcefe1);display:grid;place-items:center;font-size:58px}}
-.info{{padding:12px;display:flex;flex-direction:column;gap:7px;flex:1}}.info h3{{font-size:15px;margin:0;min-height:34px}}.price{{color:var(--g);font-size:18px;font-weight:900}}.unit{{color:#718078;font-size:12px}}.add{{border:0;background:var(--g);color:white;border-radius:8px;padding:10px;font-weight:bold;margin-top:auto}}
-.cart{{background:white;border:1px solid #dce9df;border-radius:14px;padding:15px;position:sticky;top:88px}}.cart h2{{margin-top:0}}
-.cartrow{{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid #edf2ee;font-size:13px}}.qty{{display:flex;align-items:center;gap:6px}}.qty button{{border:0;background:var(--mint);padding:4px 8px;border-radius:5px}}
-.total{{display:flex;justify-content:space-between;font-size:20px;font-weight:900;margin:16px 0}}
-.checkout{{width:100%;background:var(--gold);border:0;border-radius:9px;padding:13px;font-weight:900}}
-form input,form textarea,form select{{width:100%;margin:5px 0 9px}}.note{{font-size:12px;line-height:1.5;color:#6b776f}}
-footer{{text-align:center;background:var(--dg);color:white;padding:22px}}
-@media(max-width:820px){{.layout{{grid-template-columns:1fr}}.cart{{position:static;order:-1}}.gallery{{grid-template-columns:repeat(2,1fr)}}nav{{width:100%}}}}
-</style></head><body>
-<header><div class="top"><div class="logo">AS <span>MART</span></div><nav><a href="#shop">Shop</a><a href="#photos">Our Shop</a><a href="#cart">Basket</a></nav><button class="cartjump" onclick="document.querySelector('#cart').scrollIntoView({{behavior:'smooth'}})">🛒 Basket <b id="count">0</b></button></div></header>
-<section class="hero"><h1>Daily Grocery, Right at Your Door</h1><p>Karyana, snacks, daalain, household essentials and general store items. Browse products, add quantities and prepare your order.</p><button class="cartjump" onclick="document.querySelector('#shop').scrollIntoView({{behavior:'smooth'}})">SHOP NOW</button></section>
-<main class="wrap"><section id="photos"><h2>Our Store</h2><div class="gallery" id="gallery"></div></section>
-<h2 id="shop">Shop Products</h2><div class="filters"><input id="search" placeholder="Search product..." oninput="render()"><select id="sort" onchange="render()"><option value="">Sort by</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select></div>
-<div class="cats" id="cats"></div><div class="layout"><section><div class="grid" id="products"></div></section>
-<aside class="cart" id="cart"><h2>🛒 Your Basket</h2><div id="cartItems" class="note">Basket is empty. Add products to start.</div><div class="total"><span>Total</span><span id="total">Rs. 0</span></div>
-<h3>Customer & Delivery</h3><form onsubmit="sendOrder(event)"><input id="name" placeholder="Customer name" required><input id="phone" placeholder="Mobile number" required><textarea id="address" rows="2" placeholder="Full delivery address" required></textarea><select id="payment"><option>Cash on Delivery</option><option>JazzCash (confirm with shop)</option><option>Easypaisa (confirm with shop)</option></select><button class="checkout">Prepare WhatsApp Order</button></form>
-<p class="note">Rates shown are sample estimates, not confirmed shop prices. Update them before publishing. WhatsApp checkout requires your shop number in the code. Online wallet payments are not activated.</p></aside></div></main><footer>© 2026 AS MART · Grocery & General Store</footer>
+:root{--green:#147a45;--dark:#103d2b;--pale:#eff8f1;--gold:#f4bd4f;--ink:#17251d}
+*{box-sizing:border-box}body{margin:0;background:#f7faf7;color:var(--ink);font-family:Arial,sans-serif}
+header{background:linear-gradient(110deg,var(--dark),var(--green));color:#fff;padding:15px 4%;position:sticky;top:0;z-index:5}
+.top{max-width:1250px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{font-size:27px;font-weight:900;letter-spacing:1px}.logo span{color:#c3f0ce}
+nav a{color:#fff;text-decoration:none;font-weight:bold;margin:0 9px;font-size:14px}
+.cartJump{background:var(--gold);border:0;border-radius:22px;padding:11px 16px;font-weight:900;cursor:pointer}
+.hero{max-width:1250px;margin:20px auto;padding:38px 5%;border-radius:20px;color:white;background:linear-gradient(100deg,#0b392bdc,#147a45b5),url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1500&q=85') center/cover}
+.hero h1{font-size:clamp(28px,5vw,48px);margin:0 0 8px}.hero p{max-width:570px;line-height:1.55;font-size:17px}
+.wrap{max-width:1250px;margin:auto;padding:0 16px 35px}h2{color:var(--dark)}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px 0 25px}.gallery img{width:100%;height:145px;object-fit:cover;border-radius:12px}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.filters input,.filters select,form input,form textarea,form select{padding:12px;border:1px solid #d5e3d9;border-radius:9px;background:#fff;font:inherit}.filters input{flex:1;min-width:190px}
+.categories{display:flex;gap:8px;overflow:auto;padding:5px 0 14px}.cat{border:1px solid #cfe2d4;background:white;color:var(--dark);border-radius:22px;padding:10px 14px;white-space:nowrap;font-weight:bold;cursor:pointer}.cat.active{background:var(--green);color:white}
+.layout{display:grid;grid-template-columns:1fr 330px;gap:18px;align-items:start}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:14px}
+.product{background:white;border:1px solid #e0ebe3;border-radius:14px;overflow:hidden;box-shadow:0 4px 12px #123d2010;display:flex;flex-direction:column}
+.photo{height:145px;background:#f0f7f1;display:grid;place-items:center;overflow:hidden}.photo img{width:100%;height:100%;object-fit:contain;padding:8px}.photo .fallback{font-size:58px}
+.info{padding:12px;display:flex;flex-direction:column;gap:7px;flex:1}.info h3{font-size:15px;margin:0;min-height:34px}.price{color:var(--green);font-size:18px;font-weight:900}.unit{font-size:12px;color:#718078}.add{border:0;background:var(--green);color:white;border-radius:8px;padding:10px;font-weight:bold;margin-top:auto;cursor:pointer}
+.cart{background:#fff;border:1px solid #dce9df;border-radius:14px;padding:15px;position:sticky;top:86px}.cart h2{margin-top:0}.cartrow{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid #edf2ee;font-size:13px}.qty{display:flex;align-items:center;gap:6px}.qty button{border:0;background:var(--pale);padding:5px 8px;border-radius:5px;cursor:pointer}.total{display:flex;justify-content:space-between;font-size:20px;font-weight:900;margin:16px 0}
+form input,form textarea,form select{width:100%;margin:5px 0 9px}.checkout{width:100%;background:var(--gold);border:0;border-radius:9px;padding:13px;font-weight:900;cursor:pointer}.note{font-size:12px;line-height:1.5;color:#6b776f}
+footer{background:var(--dark);color:white;text-align:center;padding:23px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.cart{position:static;order:-1}.gallery{grid-template-columns:repeat(2,1fr)}nav{width:100%}}
+</style></head>
+<body>
+<header><div class="top"><div class="logo">AS <span>MART</span></div><nav><a href="#shop">Shop</a><a href="#ourshop">Our Shop</a><a href="#cart">Basket</a></nav><button class="cartJump" onclick="document.querySelector('#cart').scrollIntoView({behavior:'smooth'})">🛒 Basket <b id="count">0</b></button></div></header>
+<section class="hero"><h1>Fresh Products, Better Life</h1><p>Your trusted karyana and general store. Shop daily essentials, daal, chawal, snacks, personal care and household products.</p><button class="cartJump" onclick="document.querySelector('#shop').scrollIntoView({behavior:'smooth'})">SHOP NOW</button></section>
+<main class="wrap">
+<section id="ourshop"><h2>Our Store</h2><div class="gallery" id="gallery"></div></section>
+<h2 id="shop">Shop Products</h2><div class="filters"><input id="search" placeholder="Search products..." oninput="render()"><select id="sort" onchange="render()"><option value="">Sort products</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select></div>
+<div class="categories" id="categories"></div>
+<div class="layout"><section><div class="grid" id="products"></div></section>
+<aside class="cart" id="cart"><h2>🛒 Your Basket</h2><div id="cartItems" class="note">Your basket is empty. Add products to begin.</div><div class="total"><span>Total</span><span id="total">Rs. 0</span></div>
+<h3>Customer Details</h3><form onsubmit="sendOrder(event)"><input id="customer" placeholder="Your name" required><input id="phone" placeholder="Mobile number" required><textarea id="address" rows="2" placeholder="Delivery address" required></textarea><select id="payment"><option>Cash on Delivery</option><option>JazzCash (confirm with shop)</option><option>Easypaisa (confirm with shop)</option></select><button class="checkout">Place Order on WhatsApp</button></form>
+<p class="note">Prices are sample estimates. Confirm and edit all rates before publishing. Add your store WhatsApp number in the code. Wallet payment is not automatically activated.</p></aside></div>
+</main><footer>© 2026 AS MART · Grocery & General Store</footer>
 <script>
-const WHATSAPP_NUMBER="92XXXXXXXXXX"; // Add shop WhatsApp number: 92 followed by number, without +
-const shopPhotos={photos_js};
-const products={items_js}.map((p,i)=>({{id:i,name:p[0],cat:p[1],price:p[2],unit:p[3],emoji:p[4]}}));
-let cart={{}},category="All";
-document.getElementById('gallery').innerHTML=shopPhotos.map(src=>`<img src="${{src}}" alt="Photo of our grocery shop">`).join('');
-const cats=['All',...new Set(products.map(p=>p.cat))];
-document.getElementById('cats').innerHTML=cats.map(c=>`<button class="cat ${{c==='All'?'active':''}}" onclick="setCat('${{c}}',this)">${{c}}</button>`).join('');
-function setCat(c,b){{category=c;document.querySelectorAll('.cat').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()}}
-function render(){{let q=document.getElementById('search').value.toLowerCase(),s=document.getElementById('sort').value;let a=products.filter(p=>(category==='All'||p.cat===category)&&p.name.toLowerCase().includes(q));if(s==='low')a.sort((x,y)=>x.price-y.price);if(s==='high')a.sort((x,y)=>y.price-x.price);
-document.getElementById('products').innerHTML=a.map(p=>`<article class="card"><div class="productpic">${{p.emoji}}</div><div class="info"><h3>${{p.name}}</h3><div class="price">Rs. ${{p.price}}</div><div class="unit">per ${{p.unit}} · sample rate</div><button class="add" onclick="add(${{p.id}})">＋ Add to Basket</button></div></article>`).join('')||'<p>No products found.</p>';update()}}
-function add(id){{cart[id]=(cart[id]||0)+1;update()}}
-function change(id,n){{cart[id]=(cart[id]||0)+n;if(cart[id]<=0)delete cart[id];update()}}
-function update(){{let rows=Object.entries(cart),qty=rows.reduce((s,[,n])=>s+n,0),sum=0;document.getElementById('count').textContent=qty;document.getElementById('cartItems').innerHTML=rows.length?rows.map(([id,n])=>{{let p=products[+id];sum+=p.price*n;return `<div class="cartrow"><div><b>${{p.name}}</b><br>Rs. ${{p.price}} × ${{n}}</div><div class="qty"><button onclick="change(${{id}},-1)">−</button>${{n}}<button onclick="change(${{id}},1)">＋</button></div></div>`}}).join(''):'Basket is empty. Add products to start.';document.getElementById('total').textContent='Rs. '+sum.toLocaleString('en-PK')}}
-function sendOrder(e){{e.preventDefault();let rows=Object.entries(cart);if(!rows.length){{alert('Please add products first.');return}}if(WHATSAPP_NUMBER==='92XXXXXXXXXX'){{alert('First replace WHATSAPP_NUMBER in the code with your shop WhatsApp number.');return}}let total=rows.reduce((s,[id,n])=>s+products[+id].price*n,0);let lines=rows.map(([id,n])=>`${{products[+id].name}} x ${{n}} = Rs. ${{products[+id].price*n}}`).join('\\n');let msg=`AS MART ORDER\\nName: ${{document.getElementById('name').value}}\\nPhone: ${{document.getElementById('phone').value}}\\nAddress: ${{document.getElementById('address').value}}\\nPayment: ${{document.getElementById('payment').value}}\\n\\n${{lines}}\\n\\nTotal: Rs. ${{total}}`;window.open('https://wa.me/'+WHATSAPP_NUMBER+'?text='+encodeURIComponent(msg),'_blank')}}
-render();
-</script></body></html>'''
-out = Path("/mnt/data/as_mart_products_with_prices.html")
-out.write_text(html, encoding="utf-8")
-print("Created", out, "size", out.stat().st_size)
-                                                                                                                                                                                                       </body></html>
+const WHATSAPP_NUMBER = "92XXXXXXXXXX"; // Replace with your shop number, e.g. 923001234567
+const shopPhotos = [
+"data:image/jpeg;base64,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
