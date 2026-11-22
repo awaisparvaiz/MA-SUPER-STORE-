@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AS MART | Online Karyana & General Store</title>
+<style>
+:root{--green:#167a45;--dark:#123c2a;--mint:#eaf7ef;--gold:#f5b942;--ink:#17231c;--muted:#68756d}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f6faf7;color:var(--ink)}
+header{background:linear-gradient(120deg,var(--dark),var(--green));color:white;padding:18px 5%;position:sticky;top:0;z-index:5;box-shadow:0 3px 14px #0002}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.brand{font-size:25px;font-weight:900;letter-spacing:1px}.brand span{color:#b8f0c9}
+nav{display:flex;gap:16px;flex-wrap:wrap}nav a{color:white;text-decoration:none;font-weight:700;font-size:14px}
+.cartbtn{background:var(--gold);color:#19251d;border:0;border-radius:25px;padding:11px 17px;font-weight:800;cursor:pointer}
+.hero{margin:22px auto 16px;max-width:1180px;padding:38px 5%;border-radius:22px;background:linear-gradient(100deg,#103e2bdf,#167a45bd),url('https://images.unsplash.com/photo-1542838132-92c53300491e?w=1400') center/cover;color:white}
+.hero h1{font-size:clamp(28px,5vw,48px);margin:0 0 10px}.hero p{font-size:17px;max-width:560px;line-height:1.5}.hero button{background:var(--gold);border:0;padding:13px 20px;border-radius:10px;font-weight:800;cursor:pointer}
+.wrap{max-width:1180px;margin:auto;padding:0 18px 35px}.tools{display:flex;gap:10px;margin:20px 0;flex-wrap:wrap}.tools input,.tools select{padding:12px;border:1px solid #d5e2d9;border-radius:10px;background:white;font-size:15px;flex:1;min-width:180px}
+h2{color:var(--dark);margin:25px 0 14px}.cats{display:flex;gap:9px;overflow-x:auto;padding:3px 0 12px}.cat{border:1px solid #cfe4d5;background:white;color:var(--dark);padding:10px 15px;border-radius:22px;white-space:nowrap;cursor:pointer;font-weight:700}.cat.active{background:var(--green);color:white}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:15px}.product{background:white;border:1px solid #e3eee6;border-radius:15px;overflow:hidden;box-shadow:0 4px 14px #153e2410;display:flex;flex-direction:column}.pic{height:125px;background:var(--mint);display:grid;place-items:center;font-size:54px}.info{padding:12px;display:flex;flex-direction:column;gap:8px;flex:1}.info h3{font-size:15px;margin:0;min-height:35px}.price{font-weight:900;color:var(--green)}.unit{font-size:12px;color:var(--muted)}.add{margin-top:auto;background:var(--green);color:white;border:0;border-radius:9px;padding:10px;font-weight:800;cursor:pointer}
+.layout{display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start}.cart{background:white;border:1px solid #dce9df;border-radius:15px;padding:16px;position:sticky;top:90px}.cart h2{margin-top:0}.cartrow{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #edf2ee;padding:10px 0;font-size:14px}.qty{display:flex;align-items:center;gap:7px}.qty button{border:0;background:var(--mint);border-radius:6px;padding:4px 8px;cursor:pointer}.total{font-size:20px;font-weight:900;display:flex;justify-content:space-between;margin:15px 0}.checkout{width:100%;padding:13px;background:var(--gold);border:0;border-radius:10px;font-weight:900;cursor:pointer}.small{font-size:12px;color:var(--muted);line-height:1.5}
+form input,form textarea,form select{width:100%;padding:11px;border:1px solid #d5e2d9;border-radius:9px;margin:6px 0 10px;font:inherit}footer{background:#103e2b;color:white;text-align:center;padding:22px;margin-top:30px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.cart{position:static;order:-1}.hero{margin:14px}.top{align-items:flex-start}nav{order:3;width:100%}}
+</style>
+</head>
+<body>
+<header><div class="top">
+ <div class="brand">AS <span>MART</span></div>
+ <nav><a href="#shop">Shop</a><a href="#categories">Categories</a><a href="#cart">My Cart</a></nav>
+ <button class="cartbtn" onclick="document.querySelector('#cart').scrollIntoView({behavior:'smooth'})">🛒 Cart <b id="cartCount">0</b></button>
+</div></header>
+<section class="hero"><h1>Fresh Grocery, Everyday Value</h1><p>Your neighborhood karyana & general store — everyday essentials, snacks, household items and more.</p><button onclick="document.querySelector('#shop').scrollIntoView({behavior:'smooth'})">SHOP NOW</button></section>
+<main class="wrap">
+ <h2 id="categories">Shop by Category</h2><div class="cats" id="cats"></div>
+ <div class="tools"><input id="search" placeholder="Search products..." oninput="render()"><select id="sort" onchange="render()"><option value="">Sort products</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select></div>
+ <div class="layout"><section id="shop"><div class="grid" id="products"></div></section>
+ <aside class="cart" id="cart"><h2>🛒 Your Basket</h2><div id="cartItems"><p class="small">Your basket is empty. Add products to begin.</p></div><div class="total"><span>Total</span><span id="total">Rs. 0</span></div>
+ <h3>Delivery Details</h3><form id="orderForm" onsubmit="placeOrder(event)">
+ <input id="customer" placeholder="Your name" required>
+ <input id="phone" placeholder="Mobile number" inputmode="tel" required>
+ <textarea id="address" placeholder="Delivery address" rows="2" required></textarea>
+ <select id="payment"><option>Cash on Delivery</option><option>JazzCash (confirm with store)</option><option>Easypaisa (confirm with store)</option></select>
+ <button class="checkout" type="submit">Place Order on WhatsApp</button></form>
+ <p class="small">Demo store: update product prices, delivery details and WhatsApp number in the code before publishing. Online payment is not activated by this demo.</p>
+ </aside></div>
+</main><footer>© 2026 AS MART · Karyana & General Store</footer>
+<script>
+const WHATSAPP_NUMBER = "92XXXXXXXXXX"; // Replace with your store WhatsApp number (92 + number, no + sign)
+const products = [
+ ["Wheat Flour (Atta)","Staples",180,"kg","🌾"],["Rice","Staples",320,"kg","🍚"],["Sugar","Staples",170,"kg",""],["Maida","Staples",160,"kg",""],["Besan","Staples",240,"kg",""],["Suji","Staples",190,"kg",""],
+ ["Chana Daal","Pulses",280,"kg",""],["Moong Daal","Pulses",330,"kg",""],["Masoor Daal","Pulses",300,"kg",""],["Mash Daal","Pulses",390,"kg",""],["White Chickpeas","Pulses",290,"kg",""],["Black Chickpeas","Pulses",270,"kg",""],
+ ["Cooking Oil","Cooking",590,"litre","🫗"],["Banaspati Ghee","Cooking",560,"kg",""],["Salt","Cooking",60,"pack",""],["Red Chilli Powder","Spices",120,"pack","🌶️"],["Turmeric Powder","Spices",100,"pack",""],["Coriander Powder","Spices",110,"pack",""],
+ ["Vital Tea","Tea & Drinks",180,"pack","🍵"],["Milk Pack","Dairy",220,"pack","🥛"],["Tea Whitener","Dairy",250,"pack",""],["Lactogen","Baby Care",950,"pack",""],
+ ["Rio Biscuits","Snacks",50,"pack","🍪"],["TUC Biscuits","Snacks",80,"pack",""],["Cream Biscuits","Snacks",60,"pack",""],["Chips","Snacks",50,"pack","🍟"],["Nimko","Snacks",100,"pack",""],["Chocolate","Snacks",100,"piece","🍫"],["Toffees","Snacks",20,"pack",""],
+ ["Lux Soap","Personal Care",160,"piece","🧼"],["Lifebuoy Soap","Personal Care",150,"piece",""],["Shampoo","Personal Care",120,"sachet",""],["Toothpaste","Personal Care",180,"piece",""],["Hair Oil","Personal Care",220,"bottle",""],["Face Cream","Personal Care",250,"piece",""],
+ ["Washing Powder","Cleaning",180,"pack","🧺"],["Dishwashing Soap","Cleaning",100,"piece",""],["Tissue Paper","Household",120,"pack",""],["Batteries","Household",100,"pair","🔋"],["Lighter","Household",100,"piece",""]
+].map((p,i)=>({id:i,name:p[0],cat:p[1],price:p[2],unit:p[3],emoji:p[4]||"🛍️"}));
+let cart={};let category="All";
+const categories=["All",...new Set(products.map(p=>p.cat))];
+document.getElementById("cats").innerHTML=categories.map(c=>`<button class="cat ${c==="All"?"active":""}" onclick="setCat('${c}',this)">${c}</button>`).join("");
+function setCat(c,el){category=c;document.querySelectorAll(".cat").forEach(x=>x.classList.remove("active"));el.classList.add("active");render()}
+function render(){
+ let q=document.getElementById("search").value.toLowerCase(),s=document.getElementById("sort").value;
+ let list=products.filter(p=>(category==="All"||p.cat===category)&&p.name.toLowerCase().includes(q));
+ if(s==="low")list.sort((a,b)=>a.price-b.price);if(s==="high")list.sort((a,b)=>b.price-a.price);
+ document.getElementById("products").innerHTML=list.map(p=>`<article class="product"><div class="pic">${p.emoji}</div><div class="info"><h3>${p.name}</h3><div class="price">Rs. ${p.price}</div><div class="unit">per ${p.unit} · Demo price</div><button class="add" onclick="add(${p.id})">＋ Add to Basket</button></div></article>`).join("")||"<p>No products found.</p>";
+ updateCart();
+}
+function add(id){cart[id]=(cart[id]||0)+1;updateCart()}
+function change(id,n){cart[id]=(cart[id]||0)+n;if(cart[id]<=0)delete cart[id];updateCart()}
+function updateCart(){
+ let entries=Object.entries(cart),count=entries.reduce((a,[,q])=>a+q,0),sum=0;
+ document.getElementById("cartCount").textContent=count;
+ document.getElementById("cartItems").innerHTML=entries.length?entries.map(([id,q])=>{let p=products[+id];sum+=p.price*q;return `<div class="cartrow"><div><b>${p.name}</b><br><span class="small">Rs. ${p.price} × ${q}</span></div><div class="qty"><button onclick="change(${id},-1)">−</button>${q}<button onclick="change(${id},1)">＋</button></div></div>`}).join(""):'<p class="small">Your basket is empty. Add products to begin.</p>';
+ document.getElementById("total").textContent="Rs. "+sum.toLocaleString("en-PK");
+}
+function placeOrder(e){
+ e.preventDefault();let entries=Object.entries(cart);if(!entries.length){alert("Please add products to your basket.");return}
+ let total=entries.reduce((a,[id,q])=>a+products[+id].price*q,0);
+ let lines=entries.map(([id,q])=>`${products[+id].name} x ${q} = Rs. ${products[+id].price*q}`);
+ let msg=`AS MART ORDER%0AName: ${encodeURIComponent(document.getElementById("customer").value)}%0APhone: ${encodeURIComponent(document.getElementById("phone").value)}%0AAddress: ${encodeURIComponent(document.getElementById("address").value)}%0APayment: ${encodeURIComponent(document.getElementById("payment").value)}%0A%0A${encodeURIComponent(lines.join("\n"))}%0A%0ATotal: Rs. ${total}`;
+ if(WHATSAPP_NUMBER==="92XXXXXXXXXX"){alert("Please replace WHATSAPP_NUMBER in the code with your store WhatsApp number first.");return}
+ window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`,"_blank");
+}
+render();
+</script>
+</body></html>
